@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Certificate Verifier</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+
+  </head>
+  <body>
+    <h1>Certificate Verifier</h1>
+    <form id="certForm">
+      <label for="contentIdentifier">Content Identifier:</label>
+      <input type="text" id="contentIdentifier" name="contentIdentifier"><br>
+
+      <button type="submit">Get Certificate</button>
+    </form>
+
+    <div id="output"></div>
+
+    <script>
+      const form = document.getElementById("certForm");
+      const output = document.getElementById("output");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // Get input values
+        const contentIdentifier = document.getElementById("contentIdentifier").value;
+
+        // Call getCertificate function on the contract
+        const contractAddress = "0x40F87dD17Cc51074D80c551a57e655E900e4A85A";
+        const abi = [
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "username",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "contentIdentifier",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "verifier",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "verificationTime",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "certificateName",
+                    "type": "string"
+                }
+            ],
+            "name": "verifyCertificate",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "contentIdentifier",
+                    "type": "string"
+                }
+            ],
+            "name": "getCertificate",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+        const web3 = new Web3(window.ethereum);
+        const contract = new web3.eth.Contract(abi, contractAddress);
+        const certificate = await contract.methods.getCertificate(contentIdentifier).call();
+
+        // Show output
+        output.innerHTML = `
+          <h2>Certificate Information</h2>
+          <p><strong>Username:</strong> ${certificate[0]}</p>
+          <p><strong>Content Identifier:</strong> ${certificate[1]}</p>
+          <p><strong>Verifier:</strong> ${certificate[2]}</p>
+          <p><strong>Verification Time:</strong> ${new Date(certificate[3] * 1000)}</p>
+          <p><strong>Certificate Name:</strong> ${certificate[4]}</p>
+        `;
+      });
+    </script>
+  </body>
+</html>

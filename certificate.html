@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IPFS File Uploader</title>
+	<script src="https://cdn.jsdelivr.net/npm/ipfs-api/dist/index.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+	<h1>IPFS File Uploader</h1>
+	<form id="upload-form">
+		<label for="file-input">Select a file to upload:</label>
+		<input type="file" id="file-input">
+		<br>
+		<button type="submit" id="upload-button">Upload</button>
+	</form>
+	<p id="hash"></p>
+
+	<script>
+		// Connect to the IPFS API
+		const ipfs = window.IpfsApi('localhost', '5001', {protocol: 'http'});
+
+		// Handle form submission
+		$('#upload-form').submit(async (event) => {
+			event.preventDefault();
+
+			// Get the file from the input element
+			const file = $('#file-input')[0].files[0];
+
+			// Add the file to IPFS
+			const result = await ipfs.add(file);
+
+			// Display the hash of the uploaded file
+			$('#hash').text(`Hash: ${result[0].hash}`);
+		});
+	</script>
+</body>
+</html>

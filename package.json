@@ -1,0 +1,32 @@
+{
+  "name": "randchacha",
+  "version": "1.0.2",
+  "description": "The ChaCha random number generator.",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify index.js --standalone randchacha > randchacha_browser.js",
+    "buildmin": "browserify index.js --standalone randchacha | terser -c > randchacha_browser.min.js",
+    "test": "jasmine"
+  },
+  "author": "Ian Coleman",
+  "homepage": "https://github.com/iancoleman/randchacha-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iancoleman/randchacha-js.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "chacha": "^2.1.0",
+    "ipfs": "^0.66.0",
+    "ipfs-core": "^0.18.0",
+    "ipfs-http-client": "^60.0.0",
+    "js-chacha20": "^1.1.0",
+    "randchacha": "^1.0.2"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "jasmine": "^3.8.0",
+    "terser": "^5.7.1",
+    "webpack-cli": "^5.0.1"
+  }
+}

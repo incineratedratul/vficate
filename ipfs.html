@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Upload files to IPFS</title>
+  </head>
+  <body>
+    <h1>Upload files to IPFS</h1>
+    <form id="upload-form">
+      <input type="file" id="file-input" multiple>
+      <button type="submit">Upload</button>
+    </form>
+    <h2>Uploaded files:</h2>
+    <ul id="file-list"></ul>
+    <script src="https://cdn.jsdelivr.net/npm/ipfs@latest/dist/index.min.js"></script>
+
+    <script>
+      async function startIpfs() {
+        try {
+          const ipfs = await Ipfs.create({
+            repo: 'ipfs-' + Math.random(),
+            config: {
+              Addresses: {
+                Swarm: [
+                  '/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
+                  '/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star'
+                ],
+                API: '/ip4/127.0.0.1/tcp/5001',
+                Gateway: '/ip4/127.0.0.1/tcp/8080'
+              }
+            }
+          })
+
+          const fileList = document.getElementById('file-list')
+          const uploadForm = document.getElementById('upload-form')
+          const fileInput = document.getElementById('file-input')
+
+          uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault()
+            const files = fileInput.files
+            for (let i = 0; i < files.length; i++) {
+              const file = files[i]
+              const fileAdded = await ipfs.add(file, { path: '/' + file.name })
+              console.log(`File added to IPFS with hash: ${fileAdded.path}`)
+            }
+            setTimeout(updateFileList, 5000)
+          })
+
+          async function updateFileList() {
+            fileList.innerHTML = ''
+            const files = await ipfs.files.ls('/')
+            if (Array.isArray(files)) {
+              files.forEach(file => {
+                const listItem = document.createElement('li')
+                const link = document.createElement('a')
+                link.href = `https://ipfs.io/ipfs/${file.cid}`
+                link.text = file.name
+                listItem.appendChild(link)
+                fileList.appendChild(listItem)
+              })
+            }
+          }
+
+          if (ipfs) {
+            updateFileList()
+          } else {
+            console.log('Error: ipfs object is not defined')
+          }
+        } catch (error) {
+          console.error('Error starting IPFS node', error)
+        }
+      }
+
+      startIpfs()
+    </script>
+  </body>
+</html>
